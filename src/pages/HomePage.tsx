@@ -8,6 +8,7 @@ import { useSearchQuery } from "@/hooks/useSearchQuery";
 import { HomeLayout } from "@/pages/layouts/HomeLayout";
 import { BookmarksPart } from "@/pages/parts/home/BookmarksPart";
 import { HeroPart } from "@/pages/parts/home/HeroPart";
+import { TrendingPart } from "@/pages/parts/home/TrendingPart";
 import { WatchingPart } from "@/pages/parts/home/WatchingPart";
 import { SearchListPart } from "@/pages/parts/search/SearchListPart";
 import { SearchLoadingPart } from "@/pages/parts/search/SearchLoadingPart";
@@ -42,7 +43,7 @@ export function HomePage() {
     <HomeLayout showBg={showBg}>
       <div className="mb-16 sm:mb-24">
         <Helmet>
-          <title>{t("global.name")}</title>
+          <title>Dickey movies</title>
         </Helmet>
         <HeroPart searchParams={searchParams} setIsSticky={setShowBg} />
       </div>
@@ -53,6 +54,7 @@ export function HomePage() {
           <SearchListPart searchQuery={search} />
         ) : (
           <>
+            {/* <TrendingPart /> */}
             <BookmarksPart />
             <WatchingPart />
           </>
