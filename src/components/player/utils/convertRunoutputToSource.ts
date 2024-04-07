@@ -28,6 +28,8 @@ export function convertRunoutputToSource(out: {
     return {
       type: "hls",
       url: out.stream.playlist,
+      headers: out.stream.headers,
+      preferredHeaders: out.stream.preferredHeaders,
     };
   }
   if (out.stream.type === "file") {
@@ -49,6 +51,8 @@ export function convertRunoutputToSource(out: {
     return {
       type: "file",
       qualities,
+      headers: out.stream.headers,
+      preferredHeaders: out.stream.preferredHeaders,
     };
   }
   throw new Error("unrecognized type");

@@ -1,6 +1,6 @@
 {
   "about": {
-    "description": "movie-web è un'applicazione web che cerca per gli stream sull'internet. Il team cerca di usare un approccio per lo più minimalista per usufruire del contenuto.",
+    "description": "movie-web è un'applicazione web che ricerca dei stream sull'internet. Il team cerca di usare un approccio prevalentemente minimalista per usufruire del contenuto.",
     "faqTitle": "Domande comuni",
     "q1": {
       "body": "movie-web non ospita alcun contento. Quando clicci su qualcosa da guardare, movie-web cerca l'internet per media di vostra scelta (Sull schermata di caricamento e nell tab 'sorgenti video' si può vedere quale sorgente si sta utilizzando). I media non sono mai caricati da movie-web, tutto è attraverso questo meccanismo di ricerca.",
@@ -30,14 +30,14 @@
       "passphraseFrameLabel": "Frase password",
       "title": "La tua frase password"
     },
-    "hasAccount": "Hai già un account? <0>Accedi </0>",
+    "hasAccount": "Hai già un account? <0>Accedi.</0>",
     "login": {
-      "description": "Inserisci la tua frase password per accedere al proprio account",
+      "description": "Inserisci la tua frase password per accedere al vostro account",
       "deviceLengthError": "Inserisci un nome per il dispositivo",
       "passphraseLabel": "Frase password di 12 parole",
       "passphrasePlaceholder": "Frase password",
       "submit": "Accedi",
-      "title": "Accedi al proprio account",
+      "title": "Accedi al vostro account",
       "validationError": "Frase password incompleta o sbagliata"
     },
     "register": {
@@ -57,11 +57,13 @@
       },
       "host": "Ti stai collegando a <0>{{hostname}}</0> - conferma la tua fiducia prima di creare un account",
       "no": "Indietro",
+      "noHost": "Il server non è configurato, quindi non si può creare un account",
+      "noHostTitle": "Server non è configurato!",
       "title": "Ti fidi di questo server?",
       "yes": "Mi fido di questo server"
     },
     "verify": {
-      "description": "Inserisci il tuo frase password da prima per confermare che è salvato per creare il proprio account",
+      "description": "Inserisci il tuo frase password da prima per confermare che è salvato per creare un account",
       "invalidData": "I dati non sono validi",
       "noMatch": "Frase password non corrisponde",
       "passphraseLabel": "La propria frase password di 12 parole",
@@ -95,6 +97,7 @@
       "about": "Su di movie-web",
       "dmca": "DMCA",
       "login": "Accedi",
+      "onboarding": "Setup",
       "pagetitle": "{{title}} - movie-web",
       "register": "Registrarsi",
       "settings": "Impostazioni"
@@ -115,24 +118,32 @@
       "failed": "Impossibile trovare i media, riprova!",
       "loading": "Caricamento...",
       "noResults": "Non abbiamo trovato nulla!",
-      "placeholder": "Cosa vuoi guardare?",
+      "placeholder": {
+        "default": "Cosa vuoi guardare?",
+        "extra": [
+          "Cosa vorresti esplorare?",
+          "Cosa c’è nella tua lista di guardare?",
+          "Cos’è il vostro preferito film?",
+          "Cos’è il vostro preferito serie?"
+        ]
+      },
       "sectionTitle": "Risultati della ricerca"
     },
     "titles": {
       "day": {
-        "default": "Cosa vorresti vedere questo pomeriggio?",
+        "default": "Cosa vorresti guardare questo pomeriggio?",
         "extra": [
           "Senti avventuroso? Jurassic Park potrebbe essere la scelta perfetta."
         ]
       },
       "morning": {
-        "default": "Cosa vorresti vedere questa mattina?",
+        "default": "Cosa vorresti guardare questa mattina?",
         "extra": [
           "Ho sentito che «Prima Dell'alba» è buono"
         ]
       },
       "night": {
-        "default": "Cosa vorresti vedere questa stasera?",
+        "default": "Cosa vorresti guardare questa sera?",
         "extra": [
           "Stanco? Ho sentito che L'esorciccio è buono."
         ]
@@ -144,7 +155,8 @@
     "types": {
       "movie": "Film",
       "show": "Serie"
-    }
+    },
+    "unreleased": "Inedito"
   },
   "navigation": {
     "banner": {
@@ -165,6 +177,69 @@
     "message": "Abbiamo cercato ovunque: sotto i bidoni, nell'armadio, dietro il proxy, ma alla fine non siamo riusciti a trovare la pagina che stai cercando.",
     "title": "Impossibile trovare quella pagina"
   },
+  "onboarding": {
+    "defaultConfirm": {
+      "cancel": "Annulla",
+      "confirm": "Utilizzare setup predefinita",
+      "description": "Il setup predefinita non offre i migliori stream e può essere incredibilmente lento.",
+      "title": "Sei sicuro?"
+    },
+    "extension": {
+      "back": "Torna indietro",
+      "explainer": "Utilizzando l'estensione del browser, è possibile ottenere i stream ottimi che abbiamo da offrire. Basta una semplice installazione.",
+      "explainerIos": "Purtroppo, l'estensione del browser non è supportato su iOS, premere <bold>Torna indietro</bold> per scegliere un'altra opzione.",
+      "extensionHelp": "Se avete installato l'estensione ma non viene rilevata. <bold>Apri l'estensione attraverso il menu delle estensioni del browser</bold> e seguire i passaggi sullo schermo.",
+      "linkChrome": "Installa l'estensione su Chrome",
+      "linkFirefox": "Installa l'estensione su Firefox",
+      "notDetecting": "Installato su Chrome ma il sito non lo rileva? Prova a ricaricare la pagina!",
+      "notDetectingAction": "Ricarica pagina",
+      "status": {
+        "disallowed": "L'estensione non è attivato per questa pagina",
+        "disallowedAction": "Attiva l'estensione",
+        "failed": "Richiesta di stato fallita",
+        "loading": "In attesa di installare l'estensione",
+        "outdated": "Versione dell'estensione troppo vecchia",
+        "success": "L'estensione funziona come previsto!"
+      },
+      "submit": "Continua",
+      "title": "Iniziamo con un'estensione"
+    },
+    "proxy": {
+      "back": "Torna indietro",
+      "explainer": "Con il metodo proxy, è possibile ottenere stream di qualità ottima creando un proxy self-service.",
+      "input": {
+        "errorConnection": "Impossibile connettere al proxy",
+        "errorInvalidUrl": "URL non valido",
+        "errorNotProxy": "Avevamo previsto un proxy, ma abbiamo ottenuto un sito web",
+        "label": "URL proxy",
+        "placeholder": "https://"
+      },
+      "link": "Impare a creare un proxy",
+      "submit": "Invia proxy",
+      "title": "Creiamo un nuovo proxy"
+    },
+    "start": {
+      "explainer": "Per ottenere i migliori streaming possibili, è necessario scegliere il metodo di streaming da utilizzare.",
+      "options": {
+        "default": {
+          "text": "Non voglio stream di buona qualità, <0 /> <1>usa setup predefinita</1>"
+        },
+        "extension": {
+          "action": "Installa l'estensione",
+          "description": "Installate l'estensione del browser per accedere alle migliori sorgenti.",
+          "quality": "Migliore qualità",
+          "title": "Estensione del browser"
+        },
+        "proxy": {
+          "action": "Setup proxy",
+          "description": "Configurate un proxy in soli 5 minuti e ottenete l'accesso a ottimi fonti.",
+          "quality": "Buona qualità",
+          "title": "Proxy personalizzato"
+        }
+      },
+      "title": "Configuriamo movie-web"
+    }
+  },
   "overlays": {
     "close": "Chiudi"
   },
@@ -178,11 +253,11 @@
     },
     "menus": {
       "downloads": {
+        "copyHlsPlaylist": "Copia link HLS playlist",
         "disclaimer": "I download vengono effettuati direttamente dal provider. movie-web non ha il controllo sulle modalità di fornitura dei download.",
-        "downloadPlaylist": "Scarica playlist",
         "downloadSubtitle": "Scarica sottotitolo attuale",
         "downloadVideo": "Scarica video",
-        "hlsDisclaimer": "I download vengono effettuati direttamente dal provider. movie-web non ha il controllo sul modo in cui i download vengono forniti. Nota che state scaricando un playlist HLS, questio è destinato agli utenti che conoscono streaming multimediale avanzato.",
+        "hlsDisclaimer": "I download vengono effettuati direttamente dal provider. movie-web non ha il controllo sul modo in cui i download vengono forniti.<br /><br />Nota che se state scaricando un playlist HLS, <bold>non è raccomandato di scaricare se non si ha familiarità con i formati di streaming avanzati</bold>. Prova altri sorgenti per diversi formati.",
         "onAndroid": {
           "1": "Per scaricare su Android, fai clic sul pulsante di scaricare, e poi nella nuova paggina, <bold>toccare e tenere premuto</bold> sul video, e selezionare <bold>salva</bold>.",
           "shortTitle": "Scarica / Android",
@@ -220,6 +295,7 @@
         "title": "Qualità"
       },
       "settings": {
+        "audioItem": "Audio",
         "downloadItem": "Scarica",
         "enableSubtitles": "Abilita i sottotitoli",
         "experienceSection": "Esperienza di visione",
@@ -246,8 +322,9 @@
         "unknownOption": "Sconosciuto"
       },
       "subtitles": {
-        "customChoice": "Selezionare i sottotitoli dal file",
+        "customChoice": "Trascina o carica il file",
         "customizeLabel": "Personalizzare",
+        "dropSubtitleFile": "Trascina il file dei sottotitoli qui",
         "offChoice": "Spento",
         "settings": {
           "backlink": "Sottotitoli personalizzati",
@@ -262,6 +339,17 @@
       "api": {
         "text": "Impossibile caricare metadati API, verifica la connessione internet.",
         "title": "Impossibile caricare metadati API"
+      },
+      "dmca": {
+        "badge": "Rimosso",
+        "text": "Questa media non è più disponibile a causa di un notizia takedown o un rivendicazione di copyright.",
+        "title": "I media sono stati rimossi"
+      },
+      "extensionPermission": {
+        "badge": "Permesso mancato",
+        "button": "Usa l'estensione",
+        "text": "Avete l'estensione del browser, ma serve il vostro permesso per iniziare usare l'estensione.",
+        "title": "Configura l'estensione"
       },
       "failed": {
         "badge": "Fallito",
@@ -294,6 +382,13 @@
       "title": "Impossibile riprodurre il video!"
     },
     "scraping": {
+      "extensionFailure": {
+        "badge": "L'estensione è disabilitata",
+        "enableExtension": "Abilita l'estensione",
+        "homeButton": "Torna alla pagina iniziale",
+        "text": "Avete installato l'estensione movie-web. Per iniziare a usarla, è necessario abilitare l'estensione per questo sito.",
+        "title": "Abilita l'estensione"
+      },
       "items": {
         "failure": "Si è verificato un errore",
         "notFound": "Non ha il video",
@@ -315,9 +410,9 @@
     },
     "turnstile": {
       "description": "Verifica che siate umani completando il Captcha sulla destra. Questo serve a mantenere movie-web sicuro!",
-      "error": "Impossibile verificare il proprio umanità. Riprova.",
+      "error": "Impossibile verificare la vostra umanità. Riprova.",
       "title": "Dobbiamo verificare che lei sia umano.",
-      "verifyingHumanity": "verificare il proprio umanità..."
+      "verifyingHumanity": "Verificare la vostra umanità..."
     }
   },
   "screens": {
@@ -326,12 +421,12 @@
       "title": "DMCA"
     },
     "loadingApp": "Caricamento dell'applicazione",
-    "loadingUser": "Caricamento del proprio profilo",
+    "loadingUser": "Caricamento del vostro profilo",
     "loadingUserError": {
       "logout": "Esci",
       "reset": "Ripristino del server personalizzato",
-      "text": "Impossibile caricare il proprio profilo",
-      "textWithReset": "Impossibile caricare il proprio profile dal server personalizzato, vorresti ripristinare il server predefinito?"
+      "text": "Impossibile caricare il vostro profilo",
+      "textWithReset": "Impossibile caricare il vostro profile dal server personalizzato, vorresti ripristinare il server predefinito?"
     },
     "migration": {
       "failed": "Impossible migrare i propri dati.",
@@ -350,7 +445,7 @@
         "delete": {
           "button": "Eliminare l'account",
           "confirmButton": "Eliminare l'account",
-          "confirmDescription": "Sei sicuro che vuoi eliminare il proprio account? Tutti i dati propri andranno persi!",
+          "confirmDescription": "Sei sicuro che vuoi eliminare il vostro account? Tutti i dati andranno persi!",
           "confirmTitle": "Sei sicuro?",
           "text": "Questa azione è irreversibile. Tutti i propri dati verranno eliminati e non sarà possibile recuperare nulla.",
           "title": "Eliminare l'account"
@@ -390,24 +485,49 @@
     },
     "connections": {
       "server": {
-        "description": "Se si desideri connettersi a un backend personalizzato per memorizzare i dati, attivare questo e fornire l'URL.",
+        "description": "Se si desideri connettersi a un backend personalizzato per memorizzare i dati, attivare questo e fornire l'URL. <0>Istruzioni.</0>",
         "label": "Server personalizzato",
         "urlLabel": "URL del server personalizzato"
+      },
+      "setup": {
+        "doSetup": "Fare setup",
+        "errorStatus": {
+          "description": "Sembra che uno o più articoli in questo setup serve la vostra attenzione.",
+          "title": "Qualcosa serve la vostra attenzione"
+        },
+        "itemError": "C'è un errore in questo setup. Eseguire nuovamente il setup per correggerlo.",
+        "items": {
+          "default": "Setup predefinita",
+          "extension": "Estensione",
+          "proxy": "Proxy personalizzato"
+        },
+        "redoSetup": "Rifare setup",
+        "successStatus": {
+          "description": "Tutto è pronto per iniziare a guardare i vostri media preferiti.",
+          "title": "Tutto è setup!"
+        },
+        "unsetStatus": {
+          "description": "Fare clic sul pulsante a destra per avviare il setup.",
+          "title": "Non l'avete completato il setup"
+        }
       },
       "title": "Connessioni",
       "workers": {
         "addButton": "Aggiungere un nuovo lavoratore",
-        "description": "Per far funzionare l'applicazione, tutto il traffico viene instradato attraverso i proxy. Abilitare questa opzione se si desidera portare i propri lavoratori.",
+        "description": "Per far funzionare l'applicazione, tutto il traffico viene instradato attraverso i proxy. Abilitare questa opzione se si desidera portare i propri lavoratori. <0>Istruzioni.</0>",
         "emptyState": "Non ci sono ancora lavoratori, aggiungetene uno sotto",
         "label": "Utilizzare proxy worker personalizzati",
         "urlLabel": "URL dei lavoratori",
         "urlPlaceholder": "https://"
       }
     },
-    "locale": {
+    "preferences": {
       "language": "Lingua di applicazione",
-      "languageDescription": "Lingua applicata all'intera applicazione.",
-      "title": "Località"
+      "languageDescription": "Lingua applicato all'intera applicazione.",
+      "thumbnail": "Generare miniature",
+      "thumbnailDescription": "Nella maggior parte dei casi, i video non hanno miniature. È possibile attivare questa impostazione per generarle quando è necessario, ma possono rendere il video più lento.",
+      "thumbnailLabel": "Generare miniature",
+      "title": "Preferenze"
     },
     "reset": "Reset",
     "save": "Salva",
@@ -426,6 +546,7 @@
       }
     },
     "subtitles": {
+      "backgroundBlurLabel": "Sfocatura di sfondo",
       "backgroundLabel": "Opacità di sfondo",
       "colorLabel": "Colore",
       "previewQuote": "Cantami o Diva del pelide Achille l'ira funesta.",

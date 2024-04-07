@@ -2,6 +2,11 @@ import fscreen from "fscreen";
 import Hls, { Level } from "hls.js";
 
 import {
+  RULE_IDS,
+  isExtensionActiveCached,
+  setDomainRule,
+} from "@/backend/extension/messaging";
+import {
   DisplayInterface,
   DisplayInterfaceEvents,
 } from "@/components/player/display/displayInterface";
@@ -31,8 +36,8 @@ const levelConversionMap: Record<number, SourceQuality> = {
   480: "480",
 };
 
-function hlsLevelToQuality(level: Level): SourceQuality | null {
-  return levelConversionMap[level.height] ?? null;
+function hlsLevelToQuality(level?: Level): SourceQuality | null {
+  return levelConversionMap[level?.height ?? 0] ?? null;
 }
 
 function qualityToHlsLevel(quality: SourceQuality): number | null {
@@ -41,6 +46,7 @@ function qualityToHlsLevel(quality: SourceQuality): number | null {
   );
   return found ? +found[0] : null;
 }
+
 function hlsLevelsToQualities(levels: Level[]): SourceQuality[] {
   return levels
     .map((v) => hlsLevelToQuality(v))
@@ -61,6 +67,11 @@ export function makeVideoElementDisplayInterface(): DisplayInterface {
   let preferenceQuality: SourceQuality | null = null;
   let lastVolume = 1;
 
+  const languagePromises = new Map<
+    string,
+    (value: void | PromiseLike<void>) => void
+  >();
+
   function reportLevels() {
     if (!hls) return;
     const levels = hls.levels;
@@ -68,6 +79,25 @@ export function makeVideoElementDisplayInterface(): DisplayInterface {
       .map((v) => hlsLevelToQuality(v))
       .filter((v): v is SourceQuality => !!v);
     emit("qualities", convertedLevels);
+  }
+
+  function reportAudioTracks() {
+    if (!hls) return;
+    const currentTrack = hls.audioTracks?.[hls.audioTrack ?? 0];
+    if (!currentTrack) return;
+    emit("changedaudiotrack", {
+      id: currentTrack.id.toString(),
+      label: currentTrack.name,
+      language: currentTrack.lang ?? "unknown",
+    });
+    emit(
+      "audiotracks",
+      hls.audioTracks.map((v) => ({
+        id: v.id.toString(),
+        label: v.name,
+        language: v.lang ?? "unknown",
+      })),
+    );
   }
 
   function setupQualityForHls() {
@@ -100,6 +130,7 @@ export function makeVideoElementDisplayInterface(): DisplayInterface {
   }
 
   function setupSource(vid: HTMLVideoElement, src: LoadableSource) {
+    hls = null;
     if (src.type === "hls") {
       if (canPlayHlsNatively(vid)) {
         vid.src = processCdnLink(src.url);
@@ -127,10 +158,11 @@ export function makeVideoElementDisplayInterface(): DisplayInterface {
               },
             },
           },
+          renderTextTracksNatively: false,
         });
         hls.on(Hls.Events.ERROR, (event, data) => {
           console.error("HLS error", data);
-          if (data.fatal) {
+          if (data.fatal && src?.url === data.frag?.baseurl) {
             emit("error", {
               message: data.error.message,
               stackTrace: data.error.stack,
@@ -143,11 +175,55 @@ export function makeVideoElementDisplayInterface(): DisplayInterface {
           if (!hls) return;
           reportLevels();
           setupQualityForHls();
+          reportAudioTracks();
+
+          if (isExtensionActiveCached()) {
+            hls.on(Hls.Events.LEVEL_LOADED, async (_, data) => {
+              const chunkUrlsDomains = data.details.fragments.map(
+                (v) => new URL(v.url).hostname,
+              );
+              const chunkUrls = [...new Set(chunkUrlsDomains)];
+
+              await setDomainRule({
+                ruleId: RULE_IDS.SET_DOMAINS_HLS,
+                targetDomains: chunkUrls,
+                requestHeaders: {
+                  ...src.preferredHeaders,
+                  ...src.headers,
+                },
+              });
+            });
+            hls.on(Hls.Events.AUDIO_TRACK_LOADED, async (_, data) => {
+              const chunkUrlsDomains = data.details.fragments.map(
+                (v) => new URL(v.url).hostname,
+              );
+              const chunkUrls = [...new Set(chunkUrlsDomains)];
+
+              await setDomainRule({
+                ruleId: RULE_IDS.SET_DOMAINS_HLS_AUDIO,
+                targetDomains: chunkUrls,
+                requestHeaders: {
+                  ...src.preferredHeaders,
+                  ...src.headers,
+                },
+              });
+            });
+          }
         });
         hls.on(Hls.Events.LEVEL_SWITCHED, () => {
           if (!hls) return;
           const quality = hlsLevelToQuality(hls.levels[hls.currentLevel]);
           emit("changedquality", quality);
+        });
+        hls.on(Hls.Events.SUBTITLE_TRACK_LOADED, () => {
+          for (const [lang, resolve] of languagePromises) {
+            const track = hls?.subtitleTracks.find((t) => t.lang === lang);
+            if (track) {
+              resolve();
+              languagePromises.delete(lang);
+              break;
+            }
+          }
         });
       }
 
@@ -388,6 +464,54 @@ export function makeVideoElementDisplayInterface(): DisplayInterface {
     },
     setPlaybackRate(rate) {
       if (videoElement) videoElement.playbackRate = rate;
+    },
+    getCaptionList() {
+      return (
+        hls?.subtitleTracks.map((track) => {
+          return {
+            id: track.id.toString(),
+            language: track.lang ?? "unknown",
+            url: track.url,
+            needsProxy: false,
+            hls: true,
+          };
+        }) ?? []
+      );
+    },
+    getSubtitleTracks() {
+      return hls?.subtitleTracks ?? [];
+    },
+    async setSubtitlePreference(lang) {
+      // default subtitles are already loaded by hls.js
+      const track = hls?.subtitleTracks.find((t) => t.lang === lang);
+      if (track?.details !== undefined) return Promise.resolve();
+
+      // need to wait a moment before hls loads the subtitles
+      const promise = new Promise<void>((resolve, reject) => {
+        languagePromises.set(lang, resolve);
+
+        // reject after some time, if hls.js fails to load the subtitles
+        // for any reason
+        setTimeout(() => {
+          reject();
+          languagePromises.delete(lang);
+        }, 5000);
+      });
+      hls?.setSubtitleOption({ lang });
+      return promise;
+    },
+    changeAudioTrack(track) {
+      if (!hls) return;
+      const audioTrack = hls?.audioTracks.find(
+        (t) => t.id.toString() === track.id,
+      );
+      if (!audioTrack) return;
+      hls.audioTrack = hls.audioTracks.indexOf(audioTrack);
+      emit("changedaudiotrack", {
+        id: audioTrack.id.toString(),
+        label: audioTrack.name,
+        language: audioTrack.lang ?? "unknown",
+      });
     },
   };
 }

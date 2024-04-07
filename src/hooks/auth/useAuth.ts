@@ -63,6 +63,7 @@ export function useAuth() {
 
   const login = useCallback(
     async (loginData: LoginData) => {
+      if (!backendUrl) return;
       const keys = await keysFromMnemonic(loginData.mnemonic);
       const publicKeyBase64Url = bytesToBase64Url(keys.publicKey);
       const { challenge } = await getLoginChallengeToken(
@@ -87,7 +88,7 @@ export function useAuth() {
   );
 
   const logout = useCallback(async () => {
-    if (!currentAccount) return;
+    if (!currentAccount || !backendUrl) return;
     try {
       await removeSession(
         backendUrl,
@@ -102,6 +103,7 @@ export function useAuth() {
 
   const register = useCallback(
     async (registerData: RegistrationData) => {
+      if (!backendUrl) return;
       const { challenge } = await getRegisterChallengeToken(
         backendUrl,
         registerData.recaptchaToken,
@@ -134,6 +136,7 @@ export function useAuth() {
       progressItems: Record<string, ProgressMediaItem>,
       bookmarks: Record<string, BookmarkMediaItem>,
     ) => {
+      if (!backendUrl) return;
       if (
         Object.keys(progressItems).length === 0 &&
         Object.keys(bookmarks).length === 0
@@ -149,14 +152,17 @@ export function useAuth() {
         bookmarkMediaToInput(tmdbId, item),
       );
 
-      await importProgress(backendUrl, account, progressInputs);
-      await importBookmarks(backendUrl, account, bookmarkInputs);
+      await Promise.all([
+        importProgress(backendUrl, account, progressInputs),
+        importBookmarks(backendUrl, account, bookmarkInputs),
+      ]);
     },
     [backendUrl],
   );
 
   const restore = useCallback(
     async (account: AccountWithToken) => {
+      if (!backendUrl) return;
       let user: { user: UserResponse; session: SessionResponse };
       try {
         user = await getUser(backendUrl, account.token);
@@ -174,9 +180,11 @@ export function useAuth() {
         throw err;
       }
 
-      const bookmarks = await getBookmarks(backendUrl, account);
-      const progress = await getProgress(backendUrl, account);
-      const settings = await getSettings(backendUrl, account);
+      const [bookmarks, progress, settings] = await Promise.all([
+        getBookmarks(backendUrl, account),
+        getProgress(backendUrl, account),
+        getSettings(backendUrl, account),
+      ]);
 
       syncData(user.user, user.session, progress, bookmarks, settings);
     },
